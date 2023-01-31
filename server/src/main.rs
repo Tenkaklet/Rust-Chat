@@ -1,9 +1,8 @@
 use std::io::{ErrorKind, Read, Write};
-use std::net::TcpListener;
+use std::net::{TcpListener, SocketAddr, IpAddr, Ipv4Addr};
 use std::sync::mpsc;
 use std::thread;
 
-const LOCAL: &str = "127.0.0.1:6000";
 const MSG_SIZE: usize = 32;
 
 fn sleep() {
@@ -11,8 +10,15 @@ fn sleep() {
 }
 
 fn main() {
-    let server = TcpListener::bind(LOCAL).expect("Listener failed to bind");
+    println!("Server running");
+
+    let server_address = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 6000);
+
+
+
+    let server = TcpListener::bind(server_address).expect("Listener failed to bind");
     server.set_nonblocking(true).expect("failed to initialize non-blocking");
+    println!("The Server Address is {:?}", server_address);
 
     let mut clients = vec![];
     let (tx, rx) = mpsc::channel::<String>();
